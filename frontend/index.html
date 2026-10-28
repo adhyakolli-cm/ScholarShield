@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ScholarShield AI — advanced scholarship fraud and phishing detection dashboard.">
+<title>ScholarShield AI — Security Intelligence Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --bg:#070b13;
+  --panel:#0d1422;
+  --panel2:#111a2b;
+  --panel3:#162238;
+  --line:rgba(148,163,184,.14);
+  --text:#eef4ff;
+  --muted:#8fa1bd;
+  --cyan:#45e6ff;
+  --blue:#5b7cff;
+  --green:#39e58c;
+  --yellow:#ffc857;
+  --red:#ff5d73;
+  --purple:#a779ff;
+  --shadow:0 24px 80px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+  radial-gradient(circle at 12% 0%,rgba(69,230,255,.08),transparent 28%),
+  radial-gradient(circle at 90% 8%,rgba(91,124,255,.12),transparent 30%),
+  var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.container{width:min(1220px,92%);margin:auto}
+
+/* TOP SYSTEM BAR */
+.topbar{
+  height:38px;border-bottom:1px solid var(--line);background:rgba(4,8,15,.85);
+  display:flex;align-items:center;font-size:12px;color:var(--muted)
+}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.status{display:flex;align-items:center;gap:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.toplinks{display:flex;gap:22px}.toplinks a:hover{color:var(--cyan)}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:1000;background:rgba(7,11,19,.78);
+  backdrop-filter:blur(18px);border-bottom:1px solid var(--line)
+}
+.nav-inner{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;min-width:max-content}
+.logo{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06101a;
+  box-shadow:0 0 28px rgba(69,230,255,.25);font-size:19px
+}
+.brand strong{font-size:17px}.brand span{color:var(--cyan)}.tagline{display:block;color:var(--muted);font-size:10px;margin-top:3px;letter-spacing:.7px;text-transform:uppercase}
+.navlinks{display:flex;gap:25px;font-size:13px;color:#aebbd0}
+.navlinks a{padding:28px 0;position:relative}.navlinks a.active,.navlinks a:hover{color:#fff}
+.navlinks a.active:after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.nav-actions{display:flex;gap:10px}.btn{
+  border:1px solid var(--line);border-radius:11px;padding:11px 15px;color:#fff;background:#111a2a;
+  transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px
+}.btn:hover{transform:translateY(-1px);border-color:rgba(69,230,255,.45)}
+.btn.primary{background:linear-gradient(135deg,#4b67ff,#697cff);border:0}
+.btn.ghost{background:transparent}.mobile{display:none}
+
+/* HERO */
+.hero{padding:70px 0 35px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid rgba(69,230,255,.18);
+  background:rgba(69,230,255,.06);border-radius:999px;color:var(--cyan);font-size:11px;font-weight:700;letter-spacing:.5px
+}
+.hero h1{font-size:clamp(40px,5vw,68px);line-height:1.02;margin:18px 0 18px;letter-spacing:-2.8px}
+.gradient{background:linear-gradient(90deg,#fff,var(--cyan),#93a7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:16px;line-height:1.75;max-width:650px}
+.hero-actions{display:flex;gap:12px;margin-top:27px;flex-wrap:wrap}
+
+/* COMMAND CARD */
+.command{
+  background:linear-gradient(180deg,rgba(18,29,48,.94),rgba(10,17,29,.98));
+  border:1px solid rgba(126,150,191,.18);border-radius:22px;padding:18px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden
+}
+.command:before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 50% -20%,rgba(69,230,255,.18),transparent 45%);pointer-events:none}
+.command-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;position:relative}
+.command-title{display:flex;gap:10px;align-items:center}.command-title i{color:var(--cyan)}
+.live-chip{font-size:10px;padding:5px 8px;border-radius:99px;color:var(--green);background:rgba(57,229,140,.08);border:1px solid rgba(57,229,140,.15)}
+.scan-input{
+  display:flex;background:#080f1b;border:1px solid rgba(148,163,184,.17);border-radius:14px;padding:6px;position:relative;z-index:1
+}
+.scan-input i{width:45px;display:grid;place-items:center;color:#68809e}.scan-input input{
+  flex:1;background:none;border:0;outline:0;color:#fff;min-width:0;font-size:14px
+}.scan-input button{border:0;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#3aa3ff);color:#06101a;font-weight:800;padding:12px 17px}
+.scan-tools{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font-size:11px;color:var(--muted)}
+.switch{display:flex;align-items:center;gap:8px}.switch input{accent-color:var(--cyan)}
+.examples{display:flex;gap:8px;flex-wrap:wrap}.example{border:0;background:none;color:#8fa1bd;font-size:11px}.example:hover{color:var(--cyan)}
+.progress{margin-top:15px;display:none}.progress.show{display:block}
+.progress-line{height:7px;background:#07101c;border-radius:99px;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));box-shadow:0 0 14px rgba(69,230,255,.5);transition:width .3s}
+.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin:8px 0}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.step{font-size:10px;color:#667995;padding:9px;background:#0a1321;border-radius:8px}.step.active{color:#dbe8ff}.step.done{color:var(--green)}
+
+/* RESULTS */
+.result{margin-top:15px;display:none;animation:rise .35s ease}.result.show{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.result-top{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:15px;background:#0a1321;border-radius:14px;border:1px solid var(--line)}
+.verdict{display:flex;align-items:center;gap:12px}.verdict-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center}
+.verdict strong{display:block}.verdict small{color:var(--muted)}
+.risk{font-size:28px;font-weight:800}.risk small{font-size:10px;color:var(--muted);display:block;text-align:right}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}.metric{background:#0a1321;border:1px solid var(--line);padding:11px;border-radius:10px}.metric b{display:block;font-size:15px}.metric span{font-size:9px;color:var(--muted)}
+
+/* TRUST STRIP */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 70px}
+.stat{padding:19px;border:1px solid var(--line);background:rgba(13,20,34,.72);border-radius:15px}
+.stat-num{font-size:25px;font-weight:800}.stat-label{color:var(--muted);font-size:11px;margin-top:5px}
+
+/* DASHBOARD */
+.section{padding:75px 0}.section-head{text-align:center;max-width:760px;margin:0 auto 34px}.kicker{color:var(--cyan);text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.6px}.section h2{font-size:34px;margin:9px 0}.section-head p{color:var(--muted);line-height:1.7;font-size:14px}
+.dashboard{display:grid;grid-template-columns:1.6fr .8fr;gap:14px}
+.panel{background:rgba(13,20,34,.84);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 45px rgba(0,0,0,.18)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.panel-head h3{margin:0;font-size:14px}.panel-head span{font-size:10px;color:var(--muted)}
+.chart{height:230px;display:flex;align-items:end;gap:10px;padding:15px 4px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to top,transparent 0,transparent 45px,rgba(148,163,184,.06) 46px)}
+.bar{flex:1;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--cyan),rgba(69,230,255,.12));min-height:20px;box-shadow:0 0 16px rgba(69,230,255,.1);transition:.3s}.bar:hover{filter:brightness(1.3)}
+.chart-labels{display:flex;justify-content:space-between;color:#5f718d;font-size:9px;margin-top:7px}
+.alerts{display:grid;gap:9px}.alert{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:#0a1321}.alert i{font-size:11px}.alert b{font-size:11px;display:block}.alert span{font-size:9px;color:var(--muted)}
+.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.cyan{color:var(--cyan)}
+
+/* FEATURE CARDS */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.feature{
+  padding:22px;border-radius:16px;background:linear-gradient(180deg,#101a2c,#0b1321);border:1px solid var(--line);transition:.25s
+}.feature:hover{transform:translateY(-4px);border-color:rgba(69,230,255,.25);box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.feature-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:12px;background:rgba(69,230,255,.08);color:var(--cyan);margin-bottom:15px}
+.feature h3{font-size:14px;margin:0 0 8px}.feature p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}
+
+/* RED FLAGS */
+.redflags{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.flag-panel{background:linear-gradient(135deg,#111a2b,#0a1220);border:1px solid var(--line);border-radius:18px;padding:25px}
+.flag-list{display:grid;gap:12px;margin-top:18px}.flag{display:flex;gap:10px;color:#c7d2e4;font-size:12px;line-height:1.5}.flag i{color:var(--red);margin-top:3px}
+.radar{display:grid;place-items:center;min-height:350px;position:relative;overflow:hidden}
+.radar-circle{width:230px;height:230px;border-radius:50%;border:1px solid rgba(69,230,255,.25);box-shadow:0 0 0 30px rgba(69,230,255,.025),0 0 0 60px rgba(69,230,255,.02);position:relative}
+.radar-circle:before{content:"";position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(69,230,255,.16)}.radar-circle:after{content:"";position:absolute;top:50%;left:0;width:100%;height:1px;background:rgba(69,230,255,.16)}
+.sweep{position:absolute;width:50%;height:2px;top:50%;left:50%;transform-origin:left;background:linear-gradient(90deg,var(--cyan),transparent);animation:sweep 3s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.radar-dot{position:absolute;width:7px;height:7px;background:var(--red);border-radius:50%;box-shadow:0 0 12px var(--red);top:32%;left:66%}
+
+/* ENTERPRISE */
+.enterprise{display:grid;grid-template-columns:1fr 1fr;gap:14px}.code{font:12px/1.7 "JetBrains Mono",monospace;background:#060b13;border:1px solid var(--line);border-radius:12px;padding:17px;color:#a9bad2;overflow:auto}.code .key{color:var(--cyan)}.code .str{color:var(--green)}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--line);padding:45px 0 25px;background:#050810}.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:35px}.footer h4{font-size:12px;margin:0 0 13px}.footer p,.footer a{font-size:11px;color:var(--muted);line-height:1.8}.footer a:hover{color:var(--cyan)}.footer ul{list-style:none;padding:0;margin:0;display:grid;gap:5px}.bottom{border-top:1px solid var(--line);margin-top:30px;padding-top:18px;display:flex;justify-content:space-between;color:#586983;font-size:10px}
+
+/* MODAL + TOAST */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}.modal.show{display:flex}
+.modal-card{width:min(560px,100%);background:#0d1625;border:1px solid rgba(148,163,184,.2);border-radius:20px;box-shadow:var(--shadow);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0;font-size:16px}.close{background:none;border:0;color:#9aabc2;font-size:25px}.form{display:grid;gap:13px;margin-top:20px}.form label{font-size:11px;color:#9badc6}.form input,.form select,.form textarea{width:100%;background:#080f1a;border:1px solid var(--line);border-radius:10px;color:#fff;padding:11px;outline:none}.form input:focus,.form select:focus,.form textarea:focus{border-color:rgba(69,230,255,.5)}.toast{position:fixed;right:22px;bottom:22px;background:#101b2d;border:1px solid rgba(69,230,255,.25);padding:13px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:3000;font-size:12px}.toast.show{display:block;animation:rise .25s ease}
+
+/* RESPONSIVE */
+@media(max-width:980px){
+  .navlinks{display:none}.mobile{display:block}.nav-actions .ghost{display:none}
+  .hero-grid,.dashboard,.redflags,.enterprise{grid-template-columns:1fr}
+  .hero{padding-top:45px}.features{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .toplinks{display:none}.hero h1{font-size:40px;letter-spacing:-1.8px}.scan-input{flex-wrap:wrap}.scan-input input{height:42px}.scan-input button{width:100%}
+  .features,.stats,.footer-grid{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr 1fr}.bottom{display:block}.bottom span{display:block;margin-top:7px}
+}
+</style>
+</head>
+
+<body>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="status"><span class="status-dot"></span><span>THREAT ENGINE ONLINE · v4.8 · TELEMETRY SYNCED</span></div>
+    <div class="toplinks"><a href="#api">Developer API</a><a href="#enterprise">Institutional Portal</a><a href="#report">Security Desk</a></div>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#home">
+      <div class="logo"><i class="fa-solid fa-shield-halved"></i></div>
+      <div><strong>ScholarShield<span>.AI</span></strong><small class="tagline">Academic Threat Intelligence</small></div>
+    </a>
+    <nav class="navlinks">
+      <a class="active" href="#scanner">Scanner</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#features">Detection</a>
+      <a href="#redflags">Red Flags</a>
+      <a href="#enterprise">Enterprise</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn ghost" id="reportBtn"><i class="fa-solid fa-flag"></i> Report</button>
+      <button class="btn primary" onclick="document.querySelector('#scanner').scrollIntoView({behavior:'smooth'})">Start Scan</button>
+      <button class="btn mobile" onclick="toast('Use the section cards below to navigate.')"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="home">
+<section class="hero" id="scanner">
+<div class="container hero-grid">
+  <div>
+    <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> AI DEEP-SCAN ENGINE ENABLED</span>
+    <h1>Stop scholarship scams <span class="gradient">before they stop you.</span></h1>
+    <p>Analyze scholarship and grant websites through layered URL intelligence, domain signals, security checks, content heuristics and fraud indicators — all from one clean command center.</p>
+    <div class="hero-actions">
+      <button class="btn primary" onclick="document.getElementById('urlInput').focus()"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze a Website</button>
+      <button class="btn" onclick="document.querySelector('#features').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-layer-group"></i> Explore Detection</button>
+    </div>
+  </div>
+
+  <div class="command">
+    <div class="command-head">
+      <div class="command-title"><i class="fa-solid fa-terminal"></i><div><strong>Threat Analysis Console</strong><small class="tagline">URL intelligence workspace</small></div></div>
+      <span class="live-chip"><i class="fa-solid fa-circle"></i> LIVE</span>
+    </div>
+
+    <div class="scan-input">
+      <i class="fa-solid fa-globe"></i>
+      <input id="urlInput" type="url" autocomplete="off" placeholder="https://example-scholarship.org">
+      <button id="scanBtn"><i class="fa-solid fa-bolt"></i> Scan</button>
+    </div>
+
+    <div class="scan-tools">
+      <label class="switch"><input type="checkbox" id="deepScan" checked> Deep heuristic + domain analysis</label>
+      <div class="examples">
+        <button class="example" data-url="https://www.gatesfoundation.org">Safe sample</button>
+        <button class="example" data-url="http://free-college-grants2026-claim.xyz">Risk sample</button>
+      </div>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="progress-meta"><span id="progressText">Initializing analysis...</span><span id="progressPct">0%</span></div>
+      <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="steps">
+        <div class="step" id="s1"><i class="fa-solid fa-network-wired"></i> DNS & SSL audit</div>
+        <div class="step" id="s2"><i class="fa-solid fa-clock"></i> Domain intelligence</div>
+        <div class="step" id="s3"><i class="fa-solid fa-file-lines"></i> Content heuristics</div>
+        <div class="step" id="s4"><i class="fa-solid fa-credit-card"></i> Fee indicators</div>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-top">
+        <div class="verdict"><div class="verdict-icon" id="verdictIcon"></div><div><strong id="verdictTitle">Analysis complete</strong><small id="verdictSub">Signals evaluated</small></div></div>
+        <div class="risk"><span id="riskScore">--</span><small>RISK SCORE</small></div>
+      </div>
+      <div class="result-grid">
+        <div class="metric"><b id="mDomain">--</b><span>DOMAIN SIGNAL</span></div>
+        <div class="metric"><b id="mSSL">--</b><span>SSL / HTTPS</span></div>
+        <div class="metric"><b id="mContent">--</b><span>CONTENT RISK</span></div>
+        <div class="metric"><b id="mFee">--</b><span>FEE SIGNAL</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container stats">
+  <div class="stat"><div class="stat-num">1.4M+</div><div class="stat-label">Websites scanned</div></div>
+  <div class="stat"><div class="stat-num">99.4%</div><div class="stat-label">Detection precision*</div></div>
+  <div class="stat"><div class="stat-num">$12.8M</div><div class="stat-label">Losses prevented*</div></div>
+  <div class="stat"><div class="stat-num">450+</div><div class="stat-label">Partner institutions*</div></div>
+</div>
+</section>
+
+<section class="section" id="dashboard">
+<div class="container">
+  <div class="section-head"><span class="kicker">Security command center</span><h2>See the threat landscape at a glance.</h2><p>A dashboard-style view for monitoring scan activity, detection signals and recent security events.</p></div>
+  <div class="dashboard">
+    <div class="panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-chart-column cyan"></i> Scan Activity</h3><span>Last 7 analysis windows</span></div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-labels"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-satellite-dish cyan"></i> Threat Feed</h3><span>LIVE</span></div>
+      <div class="alerts">
+        <div class="alert"><i class="fa-solid fa-circle-xmark red"></i><div><b>High-risk phishing signal</b><span>Brand impersonation detected · 2m</span></div></div>
+        <div class="alert"><i class="fa-solid fa-triangle-exclamation yellow"></i><div><b>New domain pattern</b><span>Recently registered · 6m</span></div></div>
+        <div class="alert"><i class="fa-solid fa-shield-check green"></i><div><b>Verified domain</b><span>Low-risk signals · 11m</span></div></div>
+        <div class="alert"><i class="fa-solid fa-link-slash red"></i><div><b>Suspicious redirect chain</b><span>Credential collection risk · 18m</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="features">
+<div class="container">
+  <div class="section-head"><span class="kicker">Multi-layer detection</span><h2>One scanner. Multiple fraud signals.</h2><p>Designed around the detection architecture in your original ScholarShield concept, with each layer surfaced as a clear user-facing security signal.</p></div>
+  <div class="features">
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-microchip"></i></div><h3>NLP Content Analysis</h3><p>Identify urgency language, suspicious claims, unusual eligibility wording and other content-level risk indicators.</p></article>
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-receipt"></i></div><h3>Fee Detection</h3><p>Surface potential processing fees, deposits and payment requests associated with scholarship applications.</p></article>
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-fingerprint"></i></div><h3>Domain Intelligence</h3><p>Inspect domain-related signals such as age, registrar information and hosting patterns when available.</p></article>
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-building-columns"></i></div><h3>Institution Cross-Check</h3><p>Compare organization identity and scholarship claims against trusted institutional information sources.</p></article>
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-user-shield"></i></div><h3>Identity Risk</h3><p>Highlight forms requesting excessive sensitive information or using insecure submission patterns.</p></article>
+    <article class="feature"><div class="feature-icon"><i class="fa-solid fa-network-wired"></i></div><h3>Threat Correlation</h3><p>Combine multiple indicators into a single risk-oriented view rather than relying on one signal alone.</p></article>
+  </div>
+</div>
+</section>
+
+<section class="section" id="redflags">
+<div class="container">
+  <div class="redflags">
+    <div class="flag-panel">
+      <span class="kicker">Knowledge base</span><h2>Scholarship scam red flags</h2>
+      <div class="flag-list">
+        <div class="flag"><i class="fa-solid fa-circle-xmark"></i><div><b>Guaranteed selection</b><br>Claims that make guaranteed award promises deserve careful verification.</div></div>
+        <div class="flag"><i class="fa-solid fa-circle-xmark"></i><div><b>Upfront fees</b><br>Unexpected application, processing or deposit requests are important warning signals.</div></div>
+        <div class="flag"><i class="fa-solid fa-circle-xmark"></i><div><b>Unsolicited awards</b><br>Be cautious about awards you did not apply for.</div></div>
+        <div class="flag"><i class="fa-solid fa-circle-xmark"></i><div><b>Sensitive data requests</b><br>Verify why banking, identity or other sensitive information is being requested.</div></div>
+        <div class="flag"><i class="fa-solid fa-circle-xmark"></i><div><b>Impersonation</b><br>Look closely at domains, spelling, branding and contact details.</div></div>
+      </div>
+    </div>
+    <div class="flag-panel radar">
+      <div class="radar-circle"><div class="sweep"></div><div class="radar-dot"></div></div>
+      <div style="position:absolute;bottom:25px;text-align:center"><b>THREAT RADAR</b><div style="font-size:10px;color:var(--muted);margin-top:5px">Monitoring scholarship-domain indicators</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="enterprise">
+<div class="container">
+  <div class="section-head"><span class="kicker">For institutions & platforms</span><h2>Ready for an API-first future.</h2><p>The interface keeps the enterprise concepts from your original page while making the technical surface easier to understand.</p></div>
+  <div class="enterprise">
+    <div class="panel"><div class="panel-head"><h3>REST Threat Intelligence API</h3><span>JSON</span></div>
+      <pre class="code"><span class="key">POST</span> /api/v1/scan
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+
+{
+  <span class="key">"url"</span>: <span class="str">"https://example.org"</span>,
+  <span class="key">"deep_scan"</span>: <span class="str">true</span>
+}</pre>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Institutional Alerts</h3><span>EVENT STREAM</span></div>
+      <div class="alerts">
+        <div class="alert"><i class="fa-solid fa-bell cyan"></i><div><b>Brand monitoring</b><span>Detect suspicious lookalike domains</span></div></div>
+        <div class="alert"><i class="fa-solid fa-webhook cyan"></i><div><b>Webhook notifications</b><span>Push high-risk events to your systems</span></div></div>
+        <div class="alert"><i class="fa-solid fa-sliders cyan"></i><div><b>Custom thresholds</b><span>Configure institution-specific risk policies</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="report">
+<div class="container">
+  <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:linear-gradient(100deg,#0f1d30,#0a1422)">
+    <div><span class="kicker">Community intelligence</span><h2 style="margin:7px 0">Found a suspicious scholarship portal?</h2><p style="color:var(--muted);font-size:12px;margin:0">Submit the URL and evidence so it can be reviewed by the threat-intelligence workflow.</p></div>
+    <button class="btn primary" id="reportBtn2"><i class="fa-solid fa-flag"></i> Submit Threat Report</button>
+  </div>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+<div class="container">
+  <div class="footer-grid">
+    <div><div class="brand"><div class="logo"><i class="fa-solid fa-shield-halved"></i></div><div><strong>ScholarShield<span>.AI</span></strong><small class="tagline">Academic Threat Intelligence</small></div></div><p style="margin-top:16px">A student-focused security interface for detecting suspicious scholarship and grant websites.</p></div>
+    <div><h4>Product</h4><ul><li><a href="#scanner">URL Scanner</a></li><li><a href="#dashboard">Dashboard</a></li><li><a href="#features">Detection Engine</a></li></ul></div>
+    <div><h4>Resources</h4><ul><li><a href="#redflags">Scam Guide</a></li><li><a href="#enterprise">API</a></li><li><a href="#report">Threat Report</a></li></ul></div>
+    <div><h4>Security</h4><ul><li><a href="#scanner">Deep Scan</a></li><li><a href="#dashboard">Threat Feed</a></li><li><a href="#features">Risk Signals</a></li></ul></div>
+  </div>
+  <div class="bottom"><span>© 2026 ScholarShield AI · Front-end prototype</span><span><i class="fa-solid fa-lock"></i> Secure UI · Responsive · Interactive</span></div>
+</div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="modal-head"><h3><i class="fa-solid fa-shield-virus cyan"></i> Report suspicious scholarship site</h3><button class="close" id="closeModal">&times;</button></div>
+    <form class="form" id="reportForm">
+      <div><label>Suspicious URL *</label><input type="url" id="reportUrl" placeholder="https://..." required></div>
+      <div><label>Scam category</label><select><option>Application / processing fee</option><option>Phishing / identity theft</option><option>University impersonation</option><option>Fake award notification</option><option>Other suspicious activity</option></select></div>
+      <div><label>Evidence / details</label><textarea rows="4" placeholder="What did you notice?"></textarea></div>
+      <div><label>Email for optional updates</label><input type="email" placeholder="student@example.com"></div>
+      <div style="display:flex;justify-content:flex-end;gap:9px"><button type="button" class="btn" id="cancelModal">Cancel</button><button class="btn primary">Submit Report</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js">
+const $ = s => document.querySelector(s);
+const toastBox = $('#toast');
+
+function toast(message){
+  toastBox.textContent = message;
+  toastBox.classList.add('show');
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(()=>toastBox.classList.remove('show'),2800);
+}
+
+function normalizeUrl(value){
+  if(!value) return '';
+  if(!/^https?:\/\//i.test(value)) return 'https://' + value;
+  return value;
+}
+
+function simulatedRisk(url){
+  const text = url.toLowerCase();
+  const suspiciousWords = ['free','claim','grant','winner','apply','urgent','2026','scholarship','fee','reward','verify','aid'];
+  let points = suspiciousWords.reduce((n,w)=>n + (text.includes(w)?7:0),0);
+  if(text.includes('.xyz') || text.includes('.info')) points += 22;
+  if(text.includes('claim') || text.includes('winner')) points += 12;
+  if(!text.startsWith('https://')) points += 15;
+  return Math.min(96, Math.max(8, points));
+}
+
+async function scan(){
+  let raw = $('#urlInput').value.trim();
+  if(!raw){ toast('Paste a scholarship or grant URL first.'); $('#urlInput').focus(); return; }
+  const url = normalizeUrl(raw);
+  $('#urlInput').value = url;
+
+  $('#result').classList.remove('show');
+  $('#progress').classList.add('show');
+  $('#scanBtn').disabled = true;
+
+  const steps = [
+    ['s1','Resolving DNS & SSL signals...',25],
+    ['s2','Evaluating domain intelligence...',52],
+    ['s3','Analyzing content heuristics...',76],
+    ['s4','Checking payment & identity signals...',94]
+  ];
+  for(const [id,msg,pct] of steps){
+    $('#progressText').textContent = msg;
+    $('#progressPct').textContent = pct + '%';
+    $('#progressFill').style.width = pct + '%';
+    document.querySelectorAll('.step').forEach(x=>x.classList.remove('active'));
+    $('#'+id).classList.add('active');
+    await new Promise(r=>setTimeout(r,420));
+    $('#'+id).classList.remove('active');
+    $('#'+id).classList.add('done');
+  }
+  $('#progressText').textContent = 'Analysis complete';
+  $('#progressPct').textContent = '100%';
+  $('#progressFill').style.width = '100%';
+
+  const risk = simulatedRisk(url);
+  const high = risk >= 65, medium = risk >= 35 && risk < 65;
+  const color = high ? 'var(--red)' : medium ? 'var(--yellow)' : 'var(--green)';
+  $('#verdictIcon').style.background = high ? 'rgba(255,93,115,.12)' : medium ? 'rgba(255,200,87,.12)' : 'rgba(57,229,140,.12)';
+  $('#verdictIcon').style.color = color;
+  $('#verdictIcon').innerHTML = `<i class="fa-solid ${high?'fa-triangle-exclamation':medium?'fa-shield-halved':'fa-circle-check'}"></i>`;
+  $('#verdictTitle').textContent = high ? 'High-risk signals detected' : medium ? 'Suspicious signals detected' : 'Low-risk signal profile';
+  $('#verdictSub').textContent = high ? 'Verify independently before sharing information or paying.' : medium ? 'Review the findings carefully before proceeding.' : 'This prototype found fewer obvious risk indicators.';
+  $('#riskScore').textContent = risk + '/100';
+  $('#riskScore').style.color = color;
+  $('#mDomain').textContent = high ? 'HIGH' : medium ? 'MEDIUM' : 'LOW';
+  $('#mSSL').textContent = url.startsWith('https://') ? 'HTTPS' : 'NO HTTPS';
+  $('#mContent').textContent = high ? 'HIGH' : medium ? 'MEDIUM' : 'LOW';
+  $('#mFee').textContent = /fee|claim|winner|reward/i.test(url) ? 'REVIEW' : 'LOW';
+  $('#result').classList.add('show');
+  $('#scanBtn').disabled = false;
+  document.querySelectorAll('.step').forEach(x=>x.classList.remove('active'));
+  toast('Scan complete — review the signals below.');
+}
+
+$('#scanBtn').addEventListener('click', scan);
+$('#urlInput').addEventListener('keydown', e=>{ if(e.key==='Enter') scan(); });
+document.querySelectorAll('.example').forEach(btn=>btn.addEventListener('click',()=>{
+  $('#urlInput').value = btn.dataset.url; scan();
+}));
+
+const chart = $('#chart');
+[48,72,58,91,67,82,64].forEach(v=>{
+  const bar=document.createElement('div'); bar.className='bar'; bar.style.height=v+'%'; chart.appendChild(bar);
+});
+
+function openModal(){ $('#modal').classList.add('show'); }
+function closeModal(){ $('#modal').classList.remove('show'); }
+$('#reportBtn').addEventListener('click',openModal);
+$('#reportBtn2').addEventListener('click',openModal);
+$('#closeModal').addEventListener('click',closeModal);
+$('#cancelModal').addEventListener('click',closeModal);
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal') closeModal();});
+$('#reportForm').addEventListener('submit',e=>{
+  e.preventDefault(); closeModal(); toast('Threat report captured in this UI prototype.');
+});
+</script>
+</body>
+</html>
